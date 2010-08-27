@@ -154,10 +154,47 @@ int test_symlinks(void) {
   return 0;
 }
 
+
+mode_t touch_get_mode(const char *name, mode_t mode) {
+  mode_t retval = 0;
+  int fd = open(name, O_RDWR|O_CREAT|O_LARGEFILE, mode);
+  if (-1 != fd) {
+    unlink(name);
+    struct stat statbuf;
+    if (-1 != fstat(fd, &statbuf)) {
+      retval = statbuf.st_mode & 0x1ff;
+    }
+    close(fd);
+  }
+  return retval;
+}
+
+/* Try to detect problem discovered using sshfs */
+int test_umask(void) {
+  printf("info: testing umask effect on file creation\n");
+
+  mode_t orig_umask = umask(000);
+  mode_t newmode;
+  if (0666 != (newmode = touch_get_mode("foobar", 0666))) {
+    printf("  error: Wrong file mode %o when creating using mode 666 and umask 000\n",
+           newmode);
+  }
+  umask(007);
+  if (0660 != (newmode = touch_get_mode("foobar", 0666))) {
+    printf("  error: Wrong file mode %o when creating using mode 666 and umask 007\n",
+           newmode);
+  }
+
+  umask (orig_umask);
+  return 0;
+}
+
+
 int main(int argc, char **argv) {
   printf("Testing POSIX/Unix sematics on file system\n");
   test_symlinks();
   test_subdirectory_creation();
+  test_umask();
 #ifdef TEST_SQLITE
   test_sqlite_open();
 #endif /* TEST_SQLITE */
