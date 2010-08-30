@@ -125,7 +125,6 @@ int test_gcompris_locking(void) {
 int test_subdirectory_creation(void) {
 #define LEVELS 5
   char *path = strdup("test");
-  char *dirs[LEVELS];
   int level;
   printf("info: testing subdirectory creation\n");
   for (level = 0; level < LEVELS; level++) {
