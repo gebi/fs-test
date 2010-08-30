@@ -1,4 +1,4 @@
-CFLAGS=-Wall -O2 -DTEST_SQLITE
+CFLAGS=-std=c99 -pedantic -Wall -Wextra -O2 -DTEST_SQLITE
 LDFLAGS=-lsqlite3
 
 all: fs-test
