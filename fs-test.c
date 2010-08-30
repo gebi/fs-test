@@ -71,8 +71,10 @@ int test_sqlite_open(void) {
 int test_gcompris_locking(void) {
   struct flock fl;
   char *name = "testsqlite.db";
+  int fd;
+
   unlink(name);
-  int fd = open(name, O_RDWR|O_CREAT|O_LARGEFILE, 0644);
+  fd = open(name, O_RDWR|O_CREAT|O_LARGEFILE, 0644);
   printf("info: testing fcntl locking\n");
 
   fl.l_whence = SEEK_SET;
@@ -178,8 +180,9 @@ mode_t touch_get_mode(const char *name, mode_t mode) {
   mode_t retval = 0;
   int fd = open(name, O_RDWR|O_CREAT|O_LARGEFILE, mode);
   if (-1 != fd) {
-    unlink(name);
     struct stat statbuf;
+
+    unlink(name);
     if (-1 != fstat(fd, &statbuf)) {
       retval = statbuf.st_mode & 0x1ff;
     }
@@ -190,10 +193,10 @@ mode_t touch_get_mode(const char *name, mode_t mode) {
 
 /* Try to detect problem discovered using sshfs */
 int test_umask(void) {
-  printf("info: testing umask effect on file creation\n");
-
   mode_t orig_umask = umask(000);
   mode_t newmode;
+
+  printf("info: testing umask effect on file creation\n");
   if (0666 != (newmode = touch_get_mode("foobar", 0666))) {
     printf("  error: Wrong file mode %o when creating using mode 666 and umask 000\n",
            newmode);
