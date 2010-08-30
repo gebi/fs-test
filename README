@@ -1,0 +1,3 @@
+Small program to test UNIX file system semantics.  Failing any of the tests
+indicates that the file system may not be suitable for a /home file system
+on a UNIX or UNIX-like (e.g. Linux, FreeBSD, etc.) file system.
