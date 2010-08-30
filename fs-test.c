@@ -154,6 +154,26 @@ int test_symlinks(void) {
   return 0;
 }
 
+/*
+ * Test is hard links can be created.  This was a problem detected on sshfs.
+ */
+int test_hardlinks(void) {
+  static const char name[] = "file";
+  int fd;
+  printf("info: testing hard link creation\n");
+
+  fd = open(name, O_RDONLY|O_CREAT, 0644);
+  if (fd == -1) {
+    printf("  warning: Unable to touch file to hardlink\n");
+  }
+  close(fd);
+
+  unlink("hardlink");
+  if (-1 == link(name, "hardlink")) {
+    printf("  error: Unable to create hard link\n");
+  }
+  return 0;
+}
 
 mode_t touch_get_mode(const char *name, mode_t mode) {
   mode_t retval = 0;
@@ -193,6 +213,7 @@ int test_umask(void) {
 int main(int argc, char **argv) {
   printf("Testing POSIX/Unix sematics on file system\n");
   test_symlinks();
+  test_hardlinks();
   test_subdirectory_creation();
   test_umask();
 #ifdef TEST_SQLITE
