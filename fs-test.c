@@ -134,6 +134,7 @@ int test_subdirectory_creation(void) {
     if (-1 == mkdir(path, 0777)) {
       printf("  error: Unable to create directory '%s': %s\n",
          path, strerror(errno));
+      free(path);
       break;
     }
     asprintf(&newpath, "%s/%s", path, "test");
