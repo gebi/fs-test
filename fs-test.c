@@ -236,7 +236,7 @@ int test_umask(void) {
 }
 
 
-int main(int argc, char **argv) {
+int main(void) {
   printf("Testing POSIX/Unix sematics on file system\n");
   test_symlinks();
   test_hardlinks();
