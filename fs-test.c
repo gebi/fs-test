@@ -167,7 +167,7 @@ int test_hardlinks(void) {
   printf("info: testing hard link creation\n");
 
   fd = open(name, O_RDONLY|O_CREAT, 0644);
-  if (fd == -1) {
+  if (-1 == fd) {
     printf("  warning: Unable to touch file to hardlink\n");
     goto cleanup0;
   }
