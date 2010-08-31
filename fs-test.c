@@ -161,18 +161,42 @@ int test_symlinks(void) {
 int test_hardlinks(void) {
   static const char name[] = "file";
   int fd;
+  struct stat status;
+  nlink_t old_link_count;
+
   printf("info: testing hard link creation\n");
 
   fd = open(name, O_RDONLY|O_CREAT, 0644);
   if (fd == -1) {
     printf("  warning: Unable to touch file to hardlink\n");
+    goto cleanup0;
   }
-  close(fd);
 
   unlink("hardlink");
+
+  if (-1 == fstat(fd, &status)) {
+    printf("  warning: Unable to stat file to hardlink\n");
+    goto cleanup1;
+  }
+  old_link_count = status.st_nlink;
+
   if (-1 == link(name, "hardlink")) {
     printf("  error: Unable to create hard link\n");
   }
+
+  if (-1 == fstat(fd, &status)) {
+    printf("  warning: Unable to stat file to hardlink\n");
+    goto cleanup1;
+  }
+
+  if (old_link_count + 1 != status.st_nlink) {
+    printf(" error: link() succeeded but link count was not incremented\n");
+  }
+
+ cleanup1:
+  close(fd);
+
+ cleanup0:
   return 0;
 }
 
